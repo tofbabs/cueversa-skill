@@ -1,0 +1,8 @@
+spike/pylibs/
+__pycache__/
+*.pyc
+dist/
+.DS_Store
+spike/*.docx
+spike/*.pdf
+spike/*.txt

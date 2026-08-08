@@ -1,0 +1,16 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "cueversa-skills",
+  "description": "Career-workflow skills: curate a master CV, source roles into a Notion pipeline with a fit score, build tailored application packs, and log outcomes. Runs on your own Notion, Drive, and Claude subscription.",
+  "owner": {
+    "name": "Cueversa"
+  },
+  "plugins": [
+    {
+      "name": "cueversa",
+      "source": "./plugins/cueversa",
+      "category": "productivity",
+      "description": "The Cueversa career skill family: setup, fetch-jobs, apply-pack, provide-update."
+    }
+  ]
+}

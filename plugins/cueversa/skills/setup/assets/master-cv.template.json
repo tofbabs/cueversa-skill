@@ -1,0 +1,62 @@
+{
+  "version": 1,
+  "candidate": {
+    "name": "",
+    "headline": "",
+    "location": "",
+    "email": "",
+    "phone": "",
+    "links": { "github": "", "linkedin": "", "website": "" }
+  },
+  "summary": "",
+  "experience": [
+    {
+      "id": "exp-1",
+      "company": "",
+      "title": "",
+      "start": "YYYY-MM",
+      "end": "present",
+      "location": "",
+      "bullets": [
+        {
+          "id": "exp-1-b1",
+          "text": "",
+          "metric": "",
+          "evidence": [],
+          "confidence": "clean",
+          "source": "cv"
+        }
+      ]
+    }
+  ],
+  "skills": {
+    "core": [],
+    "familiar": []
+  },
+  "education": [
+    { "id": "edu-1", "degree": "", "institution": "", "year": "" }
+  ],
+  "evidence": [
+    {
+      "id": "ev-1",
+      "kind": "impact",
+      "text": "",
+      "role_id": "exp-1",
+      "source": "interview"
+    }
+  ],
+  "flags": [
+    {
+      "id": "flag-1",
+      "tone": "warn",
+      "title": "",
+      "body": "",
+      "resolved": false
+    }
+  ],
+  "provenance": {
+    "created": "",
+    "updated": "",
+    "source_cv": ""
+  }
+}

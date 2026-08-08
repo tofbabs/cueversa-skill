@@ -1,0 +1,8 @@
+{
+  "name": "cueversa",
+  "description": "Curate a master CV, source roles into a Notion pipeline scored against your CV, build tailored application packs in Drive, and log interview and offer outcomes. Standalone on your own Notion, Drive, and Claude subscription.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Cueversa"
+  }
+}

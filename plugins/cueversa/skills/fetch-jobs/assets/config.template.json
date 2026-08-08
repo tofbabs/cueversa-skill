@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "profile": {
+    "primary_identity": "Senior Backend Engineer",
+    "identity_keywords": ["backend"],
+    "level_sweet_spot": "senior",
+    "skills": ["example: java", "spring boot", "kafka", "aws", "kubernetes", "postgresql"],
+    "known_gaps": ["example: angular", "golang", "scala"],
+    "comp_floor": 100000,
+    "currency": "GBP",
+    "contract_friendly": false,
+    "flight_risk_perm_employers": [],
+    "locations": ["London, England, United Kingdom"],
+    "remote_ok": true,
+    "posted_within_days": 7,
+    "searches": [
+      "example: Senior Java Developer",
+      "example: Senior Backend Engineer"
+    ]
+  },
+  "run": {
+    "max_new_cards_per_run": 5,
+    "sources": ["linkedin"]
+  },
+  "thresholds": {
+    "identified": 8.0,
+    "backlog_min": 5.0
+  },
+  "notion": {
+    "board_name": "Job Pipeline",
+    "database_id": null,
+    "data_source_id": null,
+    "board_url": null
+  }
+}
