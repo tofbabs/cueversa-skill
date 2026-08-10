@@ -27,9 +27,14 @@ ROOT = Path(__file__).resolve().parent.parent
 SKILLS_DIR = ROOT / "plugins" / "cueversa" / "skills"
 DIST = ROOT / "dist"
 PREFIX = "cueversa"
+ROUTER_MD = ROOT / "scripts" / "merged" / "SKILL.md"
 
 NAME_RE = re.compile(r"^name:\s*(\S+)\s*$", re.MULTILINE)
 DESC_RE = re.compile(r"^description:\s*[>|]?-?\s*\S", re.MULTILINE)
+# In the merged skill everything co-locates, so `../<skill>/` prefixes collapse
+# and `cueversa:<skill>` command references become plain workflow references.
+UPDIR_RE = re.compile(r"\.\./[a-z][a-z0-9-]*/")
+SUBCMD_RE = re.compile(r"`?cueversa:([a-z][a-z0-9-]*)`?")
 
 
 def frontmatter(skill_md: str) -> str:
@@ -37,6 +42,13 @@ def frontmatter(skill_md: str) -> str:
     if len(parts) < 3:
         return ""
     return parts[1]
+
+
+def body(skill_md: str) -> str:
+    parts = skill_md.split("---", 2)
+    if len(parts) < 3:
+        return skill_md.strip()
+    return parts[2].strip()
 
 
 def validate(skill_dir: Path) -> tuple[bool, str]:
@@ -85,6 +97,58 @@ def stage_and_zip(skill_dir: Path, name: str) -> Path:
         return out
 
 
+def rewrite_body(text: str) -> str:
+    """Make a source skill body correct inside the flat merged archive."""
+    text = UPDIR_RE.sub("", text)                       # ../fetch-jobs/scripts -> scripts
+    text = SUBCMD_RE.sub(r"the \1 workflow", text)      # `cueversa:setup` -> the setup workflow
+    return text
+
+
+def build_merged(skills: list[Path]) -> Path:
+    """One archive, all four workflows under a router SKILL.md.
+
+    claude.ai has no plugin namespace and uploads one archive at a time, so this
+    bakes every workflow into a single `cueversa/` skill: the router on top, each
+    source SKILL.md body under `workflows/<name>.md` (frontmatter stripped, paths
+    co-located), and the union of every skill's scripts/references/assets. There
+    are no filename collisions across the four, so the union is flat and lossless.
+    """
+    if not ROUTER_MD.exists():
+        raise FileNotFoundError(f"router template missing at {ROUTER_MD}")
+    with tempfile.TemporaryDirectory() as tmp:
+        staged = Path(tmp) / PREFIX
+        (staged / "workflows").mkdir(parents=True)
+        shutil.copy2(ROUTER_MD, staged / "SKILL.md")
+
+        for skill in skills:
+            src_md = (skill / "SKILL.md").read_text(encoding="utf-8")
+            (staged / "workflows" / f"{skill.name}.md").write_text(
+                rewrite_body(body(src_md)) + "\n", encoding="utf-8"
+            )
+            # Fold the skill's resources into the shared top-level dirs.
+            for sub in ("scripts", "references", "assets"):
+                srcdir = skill / sub
+                if not srcdir.is_dir():
+                    continue
+                for f in srcdir.rglob("*"):
+                    if not f.is_file() or f.name in ("__pycache__", ".DS_Store"):
+                        continue
+                    dest = staged / sub / f.relative_to(srcdir)
+                    if dest.exists():
+                        raise RuntimeError(f"merge collision at {sub}/{f.relative_to(srcdir)}")
+                    dest.parent.mkdir(parents=True, exist_ok=True)
+                    shutil.copy2(f, dest)
+
+        DIST.mkdir(exist_ok=True)
+        out = DIST / f"{PREFIX}.skill"
+        out.unlink(missing_ok=True)
+        with zipfile.ZipFile(out, "w", zipfile.ZIP_DEFLATED) as z:
+            for f in sorted(staged.rglob("*")):
+                if f.is_file():
+                    z.write(f, f.relative_to(Path(tmp)))
+        return out
+
+
 def main() -> int:
     if not SKILLS_DIR.exists():
         print(f"no skills dir at {SKILLS_DIR}", file=sys.stderr)
@@ -106,6 +170,13 @@ def main() -> int:
         kb = out.stat().st_size / 1024
         built.append(out)
         print(f"  built {out.relative_to(ROOT)} ({kb:.1f} KB)")
+
+    valid_skills = [s for s in skills if validate(s)[0]]
+    if valid_skills:
+        merged = build_merged(valid_skills)
+        kb = merged.stat().st_size / 1024
+        built.append(merged)
+        print(f"  built {merged.relative_to(ROOT)} ({kb:.1f} KB) — all-in-one")
 
     print(f"\n{len(built)} archive(s) in {DIST.relative_to(ROOT)}/")
     if failed:

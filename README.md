@@ -20,12 +20,20 @@ boards.
 
 ## Install
 
-**claude.ai / Cowork** — build the flat archives and upload each under
-Settings → Customize → Skills:
+**claude.ai / Cowork** — build the archives and upload under Settings → Customize
+→ Skills. `package.py` writes both shapes:
 
 ```bash
-python3 scripts/package.py   # writes dist/cueversa-<skill>.skill
+python3 scripts/package.py
+# dist/cueversa.skill           <- all four workflows in one skill (upload this)
+# dist/cueversa-<skill>.skill   <- the four separately, if you prefer
 ```
+
+**`cueversa.skill` is the one-upload option** — a single skill that routes by
+intent to setup / fetch-jobs / apply-pack / provide-update. Upload it and you have
+the whole workflow. The four `cueversa-<skill>.skill` files are the same source
+split apart, for anyone who wants them as distinct skills. Both are generated from
+the same `plugins/cueversa/skills/` tree, so they never drift.
 
 **Claude Code** — install the plugin from this repo:
 
@@ -60,8 +68,9 @@ this repo is its own marketplace with a local plugin source, so the `version`
 field is the control.
 
 **claude.ai / Cowork.** Uploaded `.skill` archives do **not** sync. Each release,
-rebuild `python3 scripts/package.py` and re-upload the new
-`dist/cueversa-<skill>.skill` files, replacing the old ones — per account.
+rebuild `python3 scripts/package.py` and re-upload — one file if you use the
+all-in-one `dist/cueversa.skill`, or the four `dist/cueversa-<skill>.skill` files —
+replacing the old ones, per account.
 
 ## Layout
 
@@ -70,7 +79,8 @@ rebuild `python3 scripts/package.py` and re-upload the new
 plugins/cueversa/
   .claude-plugin/plugin.json
   skills/{setup,fetch-jobs,apply-pack,provide-update}/
-scripts/package.py                   builds the flat .skill archives
+scripts/package.py                   builds the .skill archives (four + all-in-one)
+scripts/merged/SKILL.md              router for the all-in-one cueversa.skill
 spike/                               render-toolchain spike (SPIKE.md)
 ```
 
