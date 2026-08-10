@@ -1,5 +1,26 @@
 {
   "version": 1,
+  "identity": {
+    "notion": {
+      "workspace_id": null,
+      "workspace_name": null,
+      "job_board": {
+        "database_id": null,
+        "data_source_id": null,
+        "board_name": "Job Pipeline",
+        "url": null
+      }
+    },
+    "drive": {
+      "root_folder_id": null,
+      "root_folder_url": null,
+      "cv_folder_id": null,
+      "packs_folder_id": null,
+      "master_cv_file_id": null,
+      "master_cv_url": null,
+      "config_file_id": null
+    }
+  },
   "profile": {
     "primary_identity": "Senior Backend Engineer",
     "identity_keywords": [
@@ -42,12 +63,6 @@
   "thresholds": {
     "identified": 8.0,
     "backlog_min": 5.0
-  },
-  "notion": {
-    "board_name": "Job Pipeline",
-    "database_id": null,
-    "data_source_id": null,
-    "board_url": null
   },
   "telemetry": {
     "enabled": true,

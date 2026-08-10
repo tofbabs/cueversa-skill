@@ -22,11 +22,15 @@ Two sources, arriving at different moments in a role's life.
 
 ## Phase 0: Preconditions
 
-Resolve the config; if it is absent or has no Notion board, refer the user to
-`cueversa:setup` and stop. Then match the update to a card on the board — by
-company and role, or the App ID. If no card matches (the role was never sourced
-or packed), say so and offer to source it via `cueversa:fetch-jobs` rather than
-creating an orphan card here.
+Resolve the config in order: `$CUEVERSA_CONFIG`, `./cueversa.config.json`,
+`~/.cueversa/config.json`, then the **Drive fallback** — search the user's Google
+Drive for `cueversa.config.json` (setup saves it in the Cueversa root folder). On
+claude.ai the sandbox filesystem is per-conversation, so a next-day run finds
+nothing local and must fall back to Drive. If it is absent everywhere or has no
+Notion board, refer the user to `cueversa:setup` and stop. Then match the update
+to a card on the board — by company and role, or the App ID. If no card matches
+(the role was never sourced or packed), say so and offer to source it via
+`cueversa:fetch-jobs` rather than creating an orphan card here.
 
 ## The email — the decision
 

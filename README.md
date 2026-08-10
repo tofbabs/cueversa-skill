@@ -14,9 +14,18 @@ Four skills, divided by how they run:
 | **provide-update** | Logs an outcome (hiring-team email or interview transcript) and moves the card | interactive intake |
 
 Everything reads one config file, resolved in order: `$CUEVERSA_CONFIG`,
-`./cueversa.config.json`, `~/.cueversa/config.json`. `setup` writes it. The
-skills never submit applications, never send anything, and are read-only on job
-boards.
+`./cueversa.config.json`, `~/.cueversa/config.json`, then a **Drive fallback** —
+`cueversa.config.json` in the user's Cueversa Drive folder. `setup` writes both
+the local copy and the Drive copy.
+
+**Durability.** On claude.ai a skill's filesystem is per-conversation, so the
+durable home for everything Cueversa keeps — config, master CV, and every
+application pack — is the user's own **Google Drive** (with the pipeline in
+Notion). The sandbox is scratch; each run rehydrates from Drive. This is what
+lets a scheduled or next-day run find a setup saved in an earlier session.
+
+The skills never submit applications, never send anything, and are read-only on
+job boards.
 
 ## Install
 

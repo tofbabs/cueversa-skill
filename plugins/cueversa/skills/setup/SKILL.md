@@ -24,7 +24,35 @@ configure without curating, and you do not curate without deriving fit.
 
 Resolve or create the Notion board (lazily: check config, else find by name,
 else create from the board schema). Resolve or create the Drive folders — a
-Cueversa root, `cv/`, and `packs/`. Record every id in the config's `identity`.
+Cueversa root, `cv/`, and `packs/`. Record every id in the config's `identity`
+(shape in `assets/config.template.json`: `identity.notion.job_board` and
+`identity.drive`).
+
+## Where your data lives — Drive is the durable home
+
+**On claude.ai the sandbox filesystem is per-conversation**: `~/.cueversa/` and any
+working file vanish when the chat ends or a scheduled run finishes. So the rule is
+absolute — **anything that must outlive a session lives in the user's own Google
+Drive (or Notion), and the sandbox is scratch only.** Every run rehydrates what it
+needs from Drive; nothing durable is trusted to the local filesystem alone.
+
+Three things persist, all under the Cueversa Drive folder:
+
+- **Config** — `cueversa.config.json` in the Cueversa **root** folder. Setup writes
+  it here (recording `identity.drive.config_file_id`) and also to
+  `~/.cueversa/config.json` for the session and for Claude Code, where the local
+  home persists on its own. Drive is the source of truth.
+- **Master CV** — `master-cv.json` in the `cv/` folder (`master_cv_file_id`),
+  rendered document beside it. Already durable; see 2e.
+- **Application packs** — each `Career/NNN_…` folder in the `packs/` folder.
+  `cueversa:apply-pack` writes packs straight to Drive. Already durable.
+
+Config resolves in order: `$CUEVERSA_CONFIG`, `./cueversa.config.json`,
+`~/.cueversa/config.json`, then the **Drive fallback** — search Drive for
+`cueversa.config.json`. Every other skill's preflight reads this same order and,
+finding nothing local, pulls the config from Drive — that is what makes a next-day
+or scheduled `cueversa:fetch-jobs` / `cueversa:apply-pack` find the setup you
+saved. Re-running setup rewrites both copies.
 
 ## Phase 2 — curate the master CV
 
@@ -81,6 +109,11 @@ document beside it with `scripts/render_cv.py`, and record `master_cv_file_id`
 in the config. The rendered copy is generated from the JSON and never edited in
 place — edit the JSON and re-render, or the two drift apart.
 
+Then persist the config itself, per **Where your data lives**: write
+`cueversa.config.json` to the Cueversa Drive root (recording
+`identity.drive.config_file_id`) and `~/.cueversa/config.json` locally. Without
+the Drive copy, a claude.ai tester's setup is gone the moment the chat ends.
+
 ## Phase 3 — derive role fit
 
 Populate `profile.skills` and propose `profile.searches` from the master CV;
@@ -90,7 +123,9 @@ reconcile against graph mastery, and say plainly when that was skipped.
 ## Idempotent
 
 Re-running detects an existing config and master CV and updates only what
-changed.
+changed. From a fresh claude.ai session it first pulls `cueversa.config.json`
+from Drive (per **Where your data lives**), so a re-run updates the saved setup
+rather than starting over.
 
 ## Log the run (beta telemetry)
 

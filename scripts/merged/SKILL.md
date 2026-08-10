@@ -26,9 +26,13 @@ memory, and do not blend two of them.
 ## Resolve the config first
 
 Every workflow reads the same config, resolved in order: `$CUEVERSA_CONFIG`, then
-`./cueversa.config.json`, then `~/.cueversa/config.json`. If none exists, the user
-has not set up Cueversa — route to `workflows/setup.md` regardless of what they
-asked, because nothing else can run without a board, Drive folders, and a master CV.
+`./cueversa.config.json`, then `~/.cueversa/config.json`, then the **Drive
+fallback** — a `cueversa.config.json` that setup saves in the Cueversa Drive root
+folder. On claude.ai the sandbox filesystem is per-conversation, so a next-day or
+scheduled run finds nothing local and must pull the config from Drive; the setup
+workflow explains this under **Where your data lives**. If it exists nowhere —
+not locally, not in Drive — the user has not set up Cueversa: route to
+`workflows/setup.md` regardless of what they asked.
 
 ## Route
 

@@ -26,8 +26,13 @@ and both stop at `Ready to Apply`.
 
 ## Phase 0: Preconditions
 
-Resolve the config (`$CUEVERSA_CONFIG`, `./cueversa.config.json`,
-`~/.cueversa/config.json`). Setup is complete when it carries the Notion board
+Resolve the config in order: `$CUEVERSA_CONFIG`, `./cueversa.config.json`,
+`~/.cueversa/config.json`, then the **Drive fallback** — search the user's Google
+Drive for `cueversa.config.json` (setup saves it in the Cueversa root folder). On
+claude.ai the sandbox filesystem is per-conversation, so a scheduled or next-day
+run finds nothing local and **must** fall back to Drive; download it to
+`~/.cueversa/config.json` and use that path as `$CUEVERSA_CONFIG` for the scripts.
+Setup is complete when the resolved config carries the Notion board
 (`identity.notion.job_board.data_source_id`), the Drive `packs/` folder, and a
 **master CV** (`identity.drive.master_cv_file_id`, or a local
 `~/.cueversa/master-cv.json`). If any is missing, refer the user to
@@ -95,7 +100,9 @@ never a stored counter. Company is the **end client** where known; for agency
 listings with a hidden client, use the agency name and record the hidden-client
 fact in the brief.
 
-**Tailor the CV from the master.** Read `master-cv.json` (never edit it). Author
+**Tailor the CV from the master.** Read the master CV (never edit it) — a local
+`~/.cueversa/master-cv.json` if present, otherwise pull it from Drive by
+`identity.drive.master_cv_file_id`; on claude.ai it always comes from Drive. Author
 a tailored `<candidate>-<company>-cv.md`:
 
 - **Brevity beats coverage.** Drop everything the JD doesn't ask for, whole

@@ -41,9 +41,14 @@ is missing - never guess or half-run.
 ### 0a. Setup precondition — refer, don't improvise
 
 Resolve the config in order: `$CUEVERSA_CONFIG`, then `./cueversa.config.json`,
-then `~/.cueversa/config.json`. Setup is **present** when that config exists and
-carries both a resolved Notion board (`identity.notion.job_board.data_source_id`)
-and a non-empty `profile.searches`. If so, load it and go to 0b.
+then `~/.cueversa/config.json`, then the **Drive fallback** — search the user's
+Google Drive for `cueversa.config.json` (setup saves it in the Cueversa root
+folder). On claude.ai the sandbox filesystem is per-conversation, so a scheduled
+or next-day run finds nothing local and **must** fall back to Drive; download the
+file to `~/.cueversa/config.json` and use that path as `$CUEVERSA_CONFIG` for the
+scripts. Setup is **present** when the resolved config carries both a Notion board
+(`identity.notion.job_board.data_source_id`) and a non-empty `profile.searches`.
+If so, load it and go to 0b.
 
 **If setup is absent or incomplete, do not run a setup interview here — that is
 `cueversa:setup`'s job.** Sourcing needs a curated master CV and derived searches
