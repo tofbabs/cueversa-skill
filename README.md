@@ -34,6 +34,28 @@ python3 scripts/package.py   # writes dist/cueversa-<skill>.skill
 /plugin install cueversa@cueversa-skills
 ```
 
+## Updating
+
+**Claude Code.** Skills install namespaced as `cueversa:setup`, `cueversa:fetch-jobs`,
+`cueversa:apply-pack`, `cueversa:provide-update` (the prefix comes from the
+plugin name). To pull a new version after a release:
+
+```
+/plugin marketplace update cueversa-skills
+```
+
+That re-pulls this repo; the installed plugin then reflects the new
+`plugin.json` version. Updates are user-initiated — there is no silent
+auto-update.
+
+**Release flow (maintainer):** bump `version` in
+`plugins/cueversa/.claude-plugin/plugin.json`, commit, push to `main`, and tag
+(`git tag vX.Y.Z && git push --tags`). The version is the signal testers see.
+
+**claude.ai / Cowork.** Uploaded `.skill` archives do **not** sync. Each release,
+rebuild `python3 scripts/package.py` and re-upload the new
+`dist/cueversa-<skill>.skill` files, replacing the old ones — per account.
+
 ## Layout
 
 ```
