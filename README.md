@@ -90,6 +90,8 @@ plugins/cueversa/
   skills/{setup,fetch-jobs,apply-pack,provide-update}/
 scripts/package.py                   builds the .skill archives (four + all-in-one)
 scripts/merged/SKILL.md              router for the all-in-one cueversa.skill
+scripts/make_walkthrough.py          regenerates docs/media/* (macOS, Pillow)
+docs/media/                          install walkthrough — animated gif + poster
 spike/                               render-toolchain spike (SPIKE.md)
 ```
 
