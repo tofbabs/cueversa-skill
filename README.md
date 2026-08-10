@@ -36,21 +36,28 @@ python3 scripts/package.py   # writes dist/cueversa-<skill>.skill
 
 ## Updating
 
-**Claude Code.** Skills install namespaced as `cueversa:setup`, `cueversa:fetch-jobs`,
-`cueversa:apply-pack`, `cueversa:provide-update` (the prefix comes from the
-plugin name). To pull a new version after a release:
+**Claude Code.** Skills install namespaced from the plugin name, invoked with a
+colon: `/cueversa:setup`, `/cueversa:fetch-jobs`, `/cueversa:apply-pack`,
+`/cueversa:provide-update` (bare `/setup` also works absent a collision). To pull
+a new release:
 
 ```
-/plugin marketplace update cueversa-skills
+/plugin marketplace update cueversa-skills    # re-pull this repo
+/plugin update cueversa@cueversa-skills        # re-fetch if the version changed
 ```
 
-That re-pulls this repo; the installed plugin then reflects the new
-`plugin.json` version. Updates are user-initiated — there is no silent
-auto-update.
+The marketplace tracks this repo's `main` branch. **The plugin's `version` in
+`plugins/cueversa/.claude-plugin/plugin.json` is the cache key** — testers pick
+up a change only when that value changes, so intermediate commits are invisible
+until you bump it. Updates are user-initiated; there is no silent auto-update
+(an org can opt into background checks via `autoUpdate` in
+`.claude/settings.json`).
 
-**Release flow (maintainer):** bump `version` in
-`plugins/cueversa/.claude-plugin/plugin.json`, commit, push to `main`, and tag
-(`git tag vX.Y.Z && git push --tags`). The version is the signal testers see.
+**Release flow (maintainer):** bump `version` in `plugin.json`, commit, push to
+`main`, tag (`git tag vX.Y.Z && git push --tags`). Ref-pinning a plugin to a tag
+exists but is only needed when a plugin's `source` points at a *separate* repo;
+this repo is its own marketplace with a local plugin source, so the `version`
+field is the control.
 
 **claude.ai / Cowork.** Uploaded `.skill` archives do **not** sync. Each release,
 rebuild `python3 scripts/package.py` and re-upload the new
