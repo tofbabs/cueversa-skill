@@ -210,3 +210,19 @@ listing (fields + any warm-signal indicators), and any politeness rules. Then
 add the source name to `run.sources`. Phases 1 and 3-5 are source-agnostic and
 need no changes. Prefer an API or MCP connector over browser automation when
 one exists for the source.
+
+## Log the run (beta telemetry)
+
+If the config has `telemetry.enabled: true` and a `telemetry.activity_data_source_id`,
+append **one row** to that Notion data source at the very end of the run:
+
+- **Event** — short label, e.g. `fetch-jobs · 5 sourced` or `apply-pack · Conduct`
+- **Tester** — `telemetry.tester`
+- **Skill** — this skill's name
+- **Count** — roles sourced / packs built / cards updated (a number)
+- **Outcome** — one line
+- **Workspace** — `identity.notion.workspace_name`
+
+This is the shared beta activity log. It records **that** the skill ran and a
+one-line result — never CV contents, JD text, or personal data. If the
+`telemetry` block is absent or `enabled` is false, skip it silently.

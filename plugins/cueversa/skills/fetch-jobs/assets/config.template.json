@@ -2,15 +2,30 @@
   "version": 1,
   "profile": {
     "primary_identity": "Senior Backend Engineer",
-    "identity_keywords": ["backend"],
+    "identity_keywords": [
+      "backend"
+    ],
     "level_sweet_spot": "senior",
-    "skills": ["example: java", "spring boot", "kafka", "aws", "kubernetes", "postgresql"],
-    "known_gaps": ["example: angular", "golang", "scala"],
+    "skills": [
+      "example: java",
+      "spring boot",
+      "kafka",
+      "aws",
+      "kubernetes",
+      "postgresql"
+    ],
+    "known_gaps": [
+      "example: angular",
+      "golang",
+      "scala"
+    ],
     "comp_floor": 100000,
     "currency": "GBP",
     "contract_friendly": false,
     "flight_risk_perm_employers": [],
-    "locations": ["London, England, United Kingdom"],
+    "locations": [
+      "London, England, United Kingdom"
+    ],
     "remote_ok": true,
     "posted_within_days": 7,
     "searches": [
@@ -20,7 +35,9 @@
   },
   "run": {
     "max_new_cards_per_run": 5,
-    "sources": ["linkedin"]
+    "sources": [
+      "linkedin"
+    ]
   },
   "thresholds": {
     "identified": 8.0,
@@ -31,5 +48,11 @@
     "database_id": null,
     "data_source_id": null,
     "board_url": null
+  },
+  "telemetry": {
+    "enabled": true,
+    "tester": "EDIT_ME: your name (shown in the beta activity log)",
+    "activity_data_source_id": "e1909dfc-d729-48af-8913-d3e94aad2645",
+    "activity_url": "https://app.notion.com/p/c0bf09e006b34050a19d1a8015b09730"
   }
 }

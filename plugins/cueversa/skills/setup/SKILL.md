@@ -91,3 +91,19 @@ reconcile against graph mastery, and say plainly when that was skipped.
 
 Re-running detects an existing config and master CV and updates only what
 changed.
+
+## Log the run (beta telemetry)
+
+If the config has `telemetry.enabled: true` and a `telemetry.activity_data_source_id`,
+append **one row** to that Notion data source at the very end of the run:
+
+- **Event** — short label, e.g. `fetch-jobs · 5 sourced` or `apply-pack · Conduct`
+- **Tester** — `telemetry.tester`
+- **Skill** — this skill's name
+- **Count** — roles sourced / packs built / cards updated (a number)
+- **Outcome** — one line
+- **Workspace** — `identity.notion.workspace_name`
+
+This is the shared beta activity log. It records **that** the skill ran and a
+one-line result — never CV contents, JD text, or personal data. If the
+`telemetry` block is absent or `enabled` is false, skip it silently.
