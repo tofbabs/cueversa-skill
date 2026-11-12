@@ -70,32 +70,44 @@ what is wrong rather than guess.
 
 ### 1. Get the skill file
 
-Download this repo (**Code → Download ZIP** on GitHub, or `git clone`), then build
-the skill file. You need Python 3.9 or later and nothing else:
+**Download [`cueversa.skill`](https://github.com/tofbabs/cueversa-skill/releases/latest/download/cueversa.skill)**
+from the [latest release](https://github.com/tofbabs/cueversa-skill/releases/latest).
+No Python, no cloning, nothing to install.
+
+Each release has these files attached:
+
+```
+cueversa.skill            <- all four skills in one file (use this one)
+cueversa-<skill>.skill    <- the same four skills as separate files, if you prefer
+```
+
+They are built automatically by GitHub Actions from the code in this repo, so they
+always match the tagged source.
+
+<details>
+<summary>Prefer to build it yourself?</summary>
+
+You need Python 3.9 or later and nothing else:
 
 ```bash
 git clone https://github.com/tofbabs/cueversa-skill.git
-```
-
-```bash
 cd cueversa-skill
-```
-
-```bash
 python3 scripts/package.py
 ```
 
-This creates a `dist/` folder:
+This writes the same files to a `dist/` folder.
 
-```
-dist/cueversa.skill            <- all four skills in one file (use this one)
-dist/cueversa-<skill>.skill    <- the same four skills as separate files, if you prefer
-```
+You can also grab an unreleased build from the latest commit: open the
+[**Build skill** workflow runs](https://github.com/tofbabs/cueversa-skill/actions/workflows/build-skill.yml),
+pick a run, and download the `cueversa-skill` artifact under **Artifacts** (you
+need to be signed in to GitHub). It is a zip; unzip it to get the `.skill` files.
+
+</details>
 
 ### 2. Upload it to your Claude account
 
 1. Open [claude.ai](https://claude.ai) and go to **Settings → Customize → Skills**.
-2. Click **Upload skill** and choose `dist/cueversa.skill`.
+2. Click **Upload skill** and choose the `cueversa.skill` file you downloaded.
 3. Make sure the skill is switched **on**.
 
 Upload either the single `cueversa.skill` **or** the four `cueversa-<skill>.skill`
@@ -188,8 +200,10 @@ in your Cueversa Drive folder.
 ## Updating
 
 **claude.ai / Cowork.** Uploaded skills do not update themselves. For each new
-release, pull the latest code, run `python3 scripts/package.py` again, and upload
-the new file in **Settings → Customize → Skills**, replacing the old one.
+release, download the new
+[`cueversa.skill`](https://github.com/tofbabs/cueversa-skill/releases/latest/download/cueversa.skill)
+and upload it in **Settings → Customize → Skills**, replacing the old one. Watch
+the repo (**Watch → Custom → Releases**) on GitHub to be told when there is one.
 
 **Claude Code.**
 
@@ -213,6 +227,14 @@ commit, push to `main`, then tag (`git tag vX.Y.Z && git push --tags`). This rep
 is its own marketplace with a local plugin source, so the `version` field is what
 controls updates.
 
+Pushing the tag runs `.github/workflows/build-skill.yml`, which builds the
+`.skill` files with `scripts/package.py` and publishes a GitHub Release with them
+attached. The tag must match `version` in `plugin.json` (`v1.2.3` ↔ `1.2.3`) or
+the release step fails. To publish a release for a tag that predates the
+workflow, run **Actions → Build skill → Run workflow** and enter the tag. Every
+push and pull request also builds the files and keeps them as a workflow
+artifact, so a broken build shows up before you tag.
+
 ### Layout
 
 ```
@@ -221,6 +243,7 @@ plugins/cueversa/
   .claude-plugin/plugin.json
   skills/{setup,fetch-jobs,apply-pack,provide-update}/
 scripts/package.py                   builds the .skill archives (four + all-in-one)
+.github/workflows/build-skill.yml    CI: builds the archives, publishes them on tag
 scripts/merged/SKILL.md              router for the all-in-one cueversa.skill
 scripts/make_walkthrough.py          regenerates docs/media/* (macOS, Pillow)
 docs/media/                          install walkthrough: animated gif + poster
