@@ -1,0 +1,69 @@
+name: Release
+
+# On every push to main:
+#   1. release-please opens or updates a release PR from the Conventional Commits
+#      since the last release (version bump in plugin.json + CHANGELOG.md).
+#   2. The .skill files are built and kept as a workflow artifact for that commit.
+#   3. When the release PR is merged, release-please tags vX.Y.Z and creates the
+#      GitHub Release, and the built .skill files are attached to it.
+#
+# The build runs in this workflow (not on the tag) because tags and releases
+# created with GITHUB_TOKEN do not trigger other workflows.
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
+    steps:
+      - id: release
+        uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+
+  build:
+    needs: release-please
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ needs.release-please.outputs.release_created == 'true' && needs.release-please.outputs.tag_name || '' }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build .skill archives
+        run: python3 scripts/package.py
+
+      - name: Check tag matches plugin version
+        if: env.RELEASE_TAG != ''
+        run: |
+          version=$(python3 -c "import json; print(json.load(open('plugins/cueversa/.claude-plugin/plugin.json'))['version'])")
+          if [ "v$version" != "$RELEASE_TAG" ]; then
+            echo "::error::Tag $RELEASE_TAG does not match plugin.json version $version"
+            exit 1
+          fi
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.RELEASE_TAG != '' && format('cueversa-skill-{0}', env.RELEASE_TAG) || 'cueversa-skill' }}
+          path: dist/*.skill
+          if-no-files-found: error
+
+      - name: Attach .skill files to the release
+        if: env.RELEASE_TAG != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$RELEASE_TAG" dist/*.skill --clobber
